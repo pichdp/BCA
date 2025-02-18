@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Copy Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .column {
+            width: 200px;
+            text-align: center;
+            padding: 10px;
+        }
+        textarea, p {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            background: linear-gradient(to right, #ff7eb3, #ff758c);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            overflow: auto;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit {
+            background-color: #007bff;
+            color: white;
+        }
+        .copy {
+            background-color: #28a745;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .copied {
+            background-color: #218838 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column">
+            <p id="display1"></p>
+            <textarea id="input1" style="display:none;"></textarea>
+            <button class="btn edit" onclick="toggleEdit('input1', 'display1', this, 'savedText1')">Edit</button>
+            <button class="btn copy" onclick="copyText('display1', this)">Copy</button>
+        </div>
+        <div class="column">
+            <p id="display2"></p>
+            <textarea id="input2" style="display:none;"></textarea>
+            <button class="btn edit" onclick="toggleEdit('input2', 'display2', this, 'savedText2')">Edit</button>
+            <button class="btn copy" onclick="copyText('display2', this)">Copy</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if(localStorage.getItem("savedText1")) {
+                document.getElementById("display1").innerText = localStorage.getItem("savedText1");
+            } else {
+                document.getElementById("display1").innerText = "Click edit to enter text...";
+            }
+            
+            if(localStorage.getItem("savedText2")) {
+                document.getElementById("display2").innerText = localStorage.getItem("savedText2");
+            } else {
+                document.getElementById("display2").innerText = "Click edit to enter text...";
+            }
+        });
+        
+        function toggleEdit(textareaId, displayId, btn, storageKey) {
+            var textarea = document.getElementById(textareaId);
+            var display = document.getElementById(displayId);
+            if (textarea.style.display === "none") {
+                textarea.style.display = "block";
+                display.style.display = "none";
+                textarea.value = localStorage.getItem(storageKey) || display.innerText;
+                btn.innerText = "Save";
+            } else {
+                textarea.style.display = "none";
+                display.style.display = "block";
+                display.innerText = textarea.value;
+                localStorage.setItem(storageKey, textarea.value);
+                btn.innerText = "Edit";
+            }
+        }
+
+        function copyText(displayId, btn) {
+            var text = document.getElementById(displayId).innerText;
+            var tempInput = document.createElement("textarea");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            btn.classList.add("copied");
+            btn.innerText = "Copied!";
+            setTimeout(() => {
+                btn.classList.remove("copied");
+                btn.innerText = "Copy";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
